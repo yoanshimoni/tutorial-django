@@ -8,7 +8,7 @@ node_modules
 *.pyc
 # testing
 /coverage
-
+*__pycache__
 # production
 /build
 
