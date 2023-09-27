@@ -1,0 +1,35 @@
+version: '3.8'
+x-common-variables: &common-variables
+  MONGO_DB_USERNAME: root
+  MONGO_DB_PASSWORD: examplepass
+  MONGO_DB_HOST: mongo
+  MONGO_DB_PORT: 27017
+
+networks:
+  my_custom_network:
+    driver: bridge
+
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=examplepass
+    networks:
+      - my_custom_network
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    environment: *common-variables
+    networks:
+      - my_custom_network
+  migrate:
+    build: .
+    entrypoint: python manage.py migrate
+    environment: *common-variables
